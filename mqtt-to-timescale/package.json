@@ -1,0 +1,19 @@
+{
+  "name": "mqtt-to-timescale",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "type": "module",
+  "scripts": {},
+  "keywords": [],
+  "author": "",
+  "license": "MIT",
+  "dependencies": {
+    "mqtt": "^4.3.4",
+    "pg": "^8.7.1"
+  },
+  "devDependencies": {
+    "@babel/preset-env": "^7.16.8",
+    "pkg": "^5.5.2"
+  }
+}
