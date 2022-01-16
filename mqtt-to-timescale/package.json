@@ -9,6 +9,7 @@
   "author": "",
   "license": "MIT",
   "dependencies": {
+    "arg": "^5.0.1",
     "mqtt": "^4.3.4",
     "pg": "^8.7.1"
   },
