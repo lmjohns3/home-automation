@@ -1,6 +1,7 @@
 import arg from 'arg'
-import { connect } from 'mqtt'
+import mqtt from 'mqtt'
 import pg from 'pg'
+import url from 'url'
 
 const args = arg({ '--pg': String, '--mqtt': String, '--sub': String })
 
@@ -9,15 +10,24 @@ const sql = new pg.Client(args['--pg'])
 sql.connect(err => {
   if (err) throw err;
 
-  const mqtt  = connect(args['--mqtt'] || 'mqtt://localhost')
+  const m = url.parse(args['--mqtt'] || 'mqtt://localhost')
 
-  mqtt.on('connect', () => {
-    mqtt.subscribe(args['--sub'] || '#', (err, conns) => {
-      console.log('subscribed to', conns[0]);
+  const protocol = m.protocol || 'mqtt:'
+  const host = m.host || 'localhost'
+  const port = m.port || 1883
+
+  const opts = {}
+  if (m.auth) [ opts.username, opts.password ] = m.auth.split(':')
+
+  const broker = mqtt.connect(`${protocol}//${host}:${port}`, opts)
+
+  broker.on('connect', () => {
+    broker.subscribe(args['--sub'] || '#', (err, conns) => {
+      console.log('subscribed to', conns[0])
     })
   })
 
-  mqtt.on('message', (topic, message) => {
+  broker.on('message', (topic, message) => {
     const [ _1, _2, place, metric ] = topic.split('/')
     if (metric === 'temp') {
       const [ time, degc ] = message.toString().split(' ')
